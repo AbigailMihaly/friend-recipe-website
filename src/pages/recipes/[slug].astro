@@ -10,10 +10,29 @@ export async function getStaticPaths() {
 }
 
 const { recipe } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout title={recipe.title}>
+
 	<main>
+	<a href={${base}/}>← Back</a>
+	<div class="recipe">
+		<!-- Photo on the left -->
+		{recipe.image && <img src={recipe.image} alt={recipe.title} />}
+
+		<!-- All the text on the right -->
+		<div class="info">
+			<h2>{recipe.title}</h2>
+			<p><strong>Recommended by:</strong> {recipe.recommender}</p>
+			<p><strong>Recipe By:</strong> {recipe.source}</p>
+			<p><strong>Tags:</strong> {recipe.tags.join(', ')}</p>
+			<p><a href={recipe.link} target="_blank">See the full recipe ↗</a></p>
+		</div>
+	</div>
+	</main>
+
+	<!-- <main>
 		<a href="/">← Back to all recipes</a>
 		<h2>{recipe.title}</h2>
 		{recipe.image && <img src={recipe.image} alt={recipe.title} />}
@@ -21,10 +40,19 @@ const { recipe } = Astro.props;
 		<p><strong>Recommended by:</strong> {recipe.recommender}</p>
 		<p><strong>Tags:</strong> {recipe.tags.join(', ')}</p>
 		<p><a href={recipe.link} target="_blank">View the full recipe ↗</a></p>
-	</main>
+	</main> -->
 </Layout>
 
 <style>
 	h2 { font-size: 2rem; color: var(--orange); }
-	img { max-width: 100%; border: 3px solid var(--blue); border-radius: 16px; }
+	/* Side-by-side layout: photo left, text right */
+	.recipe { display: flex; gap: 1.5rem; align-items: flex-start; margin-top: 1rem; }
+	.info { flex: 1; }
+	.info h2 { margin-top: 0; }
+
+	/* Smaller square photo */
+	img { width: 300px; aspect-ratio: 1 / 1; object-fit: cover; flex-shrink: 0; border: 0px solid var(--blue); border-radius: 16px; }
+
+	/* On phones, stack the photo above the text */
+	@media (max-width: 600px) { .recipe { flex-direction: column; } img { width: 100%; } }
 </style>

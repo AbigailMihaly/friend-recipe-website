@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { getRecipes } from '../lib/recipes.js';
 
 const recipes = await getRecipes();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 // Every unique tag across all recipes, alphabetized
 const allTags = [...new Set(recipes.flatMap((r) => r.tags))].sort();
 
@@ -19,7 +20,7 @@ const grouped = [
 	<main>
 		<!-- Link to the Google Form for new recipes -->
 		<a class="submit" href="https://forms.gle/sbQ9b42jihryXjTk8" target="_blank" rel="noopener">
-		Submit Another Recipe
+		Add a Recipe
 		</a>
 
 		<!-- Filter buttons -->
@@ -35,7 +36,7 @@ const grouped = [
 		<!-- Recipe tiles -->
 		<div class="grid">
 			{recipes.map((r) => (
-				<a class="tile" href={`/recipes/${r.slug}`} data-tags={r.tags.join(',')}>
+				<a class="tile" href={${base}/recipes/${r.slug}} data-tags={r.tags.join(',')}>
 					{r.image ? <img src={r.image} alt={r.title} /> : <div class="noimg">🍴</div>}
 					<h2>{r.title}</h2>
 				</a>
