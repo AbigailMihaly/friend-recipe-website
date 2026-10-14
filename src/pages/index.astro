@@ -36,7 +36,7 @@ const grouped = [
 		<!-- Recipe tiles -->
 		<div class="grid">
 			{recipes.map((r) => (
-				<a class="tile" href={${base}/recipes/${r.slug}} data-tags={r.tags.join(',')}>
+				<a class="tile" href={`${base}/recipes/${r.slug}`} data-tags={r.tags.join(',')}>
 					{r.image ? <img src={r.image} alt={r.title} /> : <div class="noimg">🍴</div>}
 					<h2>{r.title}</h2>
 				</a>
