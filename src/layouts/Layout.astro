@@ -14,7 +14,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 		<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&family=Caveat:wght@700&display=swap" rel="stylesheet" />		<title>{title}</title>
 	</head>
 	<body>
-		<h1><a href={`${base}/`}>BBL Recipe Library</a></h1>
+		<h1>
+				<img class="icon" src={`${base}/recipe-website-icon.png`} alt="" />
+				<a href={`${base}/`}>BBL Recipe Library</a>
+		</h1>
 		<slot />
 	</body>
 </html>
@@ -28,6 +31,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 	h1 a { color: white; text-decoration: none; }
 	main { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
 	a { color: var(--blue); }
+
+	h1 { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+	.icon { height: 1.2em; width: auto; }
+
 </style>
 
 
