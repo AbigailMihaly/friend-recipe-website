@@ -1,4 +1,105 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import { getRecipes } from '../lib/recipes.js';
+
+const recipes = await getRecipes();
+// Every unique tag across all recipes, alphabetized
+const allTags = [...new Set(recipes.flatMap((r) => r.tags))].sort();
+
+// Build each filter group straight from the sheet's two columns
+const unique = (list) => [...new Set(list)].sort((a, b) => a.localeCompare(b));
+const grouped = [
+  ['Category', unique(recipes.flatMap((r) => r.categories))],
+  ['Ingredients', unique(recipes.flatMap((r) => r.ingredients))],
+];
+
+---
+
+<Layout>
+	<main>
+		<!-- Link to the Google Form for new recipes -->
+		<a class="submit" href="https://forms.gle/sbQ9b42jihryXjTk8" target="_blank" rel="noopener">
+		Submit Another Recipe
+		</a>
+
+		<!-- Filter buttons -->
+		<div class="filters">
+			{grouped.map(([label, tags]) => tags.length > 0 && (
+				<div class="group">
+					<span>{label}:</span>
+					{tags.map((tag) => <button data-tag={tag}>{tag}</button>)}
+				</div>
+			))}
+		</div>
+
+		<!-- Recipe tiles -->
+		<div class="grid">
+			{recipes.map((r) => (
+				<a class="tile" href={`/recipes/${r.slug}`} data-tags={r.tags.join(',')}>
+					{r.image ? <img src={r.image} alt={r.title} /> : <div class="noimg">🍴</div>}
+					<h2>{r.title}</h2>
+				</a>
+			))}
+		</div>
+	</main>
+</Layout>
+
+<script>
+	const buttons = document.querySelectorAll('.filters button');
+	const allBtn = document.querySelector('[data-tag="all"]');
+	const tiles = document.querySelectorAll('.tile');
+	const selected = new Set(); // tags that are currently turned on
+
+	function update() {
+		// Highlight selected tags; "All" is lit only when nothing else is selected
+		buttons.forEach((b) =>
+			b.classList.toggle('active', b === allBtn ? selected.size === 0 : selected.has(b.dataset.tag))
+		);
+		// Show a tile only if it has EVERY selected tag
+		tiles.forEach((t) => {
+			const tags = t.dataset.tags.split(',');
+			t.style.display = [...selected].every((tag) => tags.includes(tag)) ? '' : 'none';
+		});
+	}
+
+	buttons.forEach((btn) =>
+		btn.addEventListener('click', () => {
+			const tag = btn.dataset.tag;
+			if (tag === 'all') selected.clear(); // "All" resets everything
+			else if (selected.has(tag)) selected.delete(tag); // click again to turn off
+			else selected.add(tag);
+			update();
+		})
+	);
+</script>
+
+<style>
+	.filters { margin-bottom: 1.5rem; }
+	.group { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; }
+	.group span { font-weight: 600; min-width: 6.5rem; }
+	.filters button { font: inherit; border: 0px solid var(--blue); background: var(--green); color: white; border-radius: 999px; padding: 0.3rem 1rem; cursor: pointer; }
+	.filters button.active { background: var(--blue); color: white; }
+	.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
+	/* .tile { background: var(--yellow); border: 0px solid var(--blue); border-radius: 16px; overflow: hidden; text-decoration: none; transition: transform 0.15s; } */
+.tile { background: none; border: none; box-shadow: none; text-decoration: none; transition: transform 0.15s; }
+
+	.tile:hover { transform: rotate(-2deg) scale(1.03); }
+
+	/* .tile img, .noimg { width: 100%; height: 160px; object-fit: cover; display: block; } */
+	.tile img, .noimg { width: 100%; aspect-ratio: 1 / 1; height: auto; object-fit: cover; display: block; border: 0px solid var(--blue); border-radius: 16px; }
+
+	.noimg { background: var(--orange); display: grid; place-items: center; font-size: 3rem; }
+	/* .tile h2 { font-size: 1.1rem; margin: 0; padding: 0.75rem; } */
+	.tile h2 { font-size: 1.1rem; margin: 0; padding: 0.6rem 0.25rem; text-align: center; }
+
+	/* for the link to google form to submit new recipe */
+	.submit { display: block; width: fit-content; margin: 0 auto 1.5rem; background: var(--orange); color: white; font-weight: 600; text-decoration: none; padding: 0.6rem 1.4rem; border: 0px solid var(--blue); border-radius: 999px; transition: transform 0.15s; }
+	.submit:hover { transform: rotate(-2deg) scale(1.05); }
+
+</style>
+
+
+<!-- ---
 import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 
@@ -8,4 +109,4 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
 	<Welcome />
-</Layout>
+</Layout> -->

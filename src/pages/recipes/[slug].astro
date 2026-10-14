@@ -1,0 +1,30 @@
+
+---
+import Layout from '../../layouts/Layout.astro';
+import { getRecipes } from '../../lib/recipes.js';
+
+// Tells Astro to build one page per recipe
+export async function getStaticPaths() {
+  const recipes = await getRecipes();
+  return recipes.map((r) => ({ params: { slug: r.slug }, props: { recipe: r } }));
+}
+
+const { recipe } = Astro.props;
+---
+
+<Layout title={recipe.title}>
+	<main>
+		<a href="/">← Back to all recipes</a>
+		<h2>{recipe.title}</h2>
+		{recipe.image && <img src={recipe.image} alt={recipe.title} />}
+		<p><strong>Source:</strong> {recipe.source}</p>
+		<p><strong>Recommended by:</strong> {recipe.recommender}</p>
+		<p><strong>Tags:</strong> {recipe.tags.join(', ')}</p>
+		<p><a href={recipe.link} target="_blank">View the full recipe ↗</a></p>
+	</main>
+</Layout>
+
+<style>
+	h2 { font-size: 2rem; color: var(--orange); }
+	img { max-width: 100%; border: 3px solid var(--blue); border-radius: 16px; }
+</style>
