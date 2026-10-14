@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '0 12 * * *' # rebuilds daily so new recipes from your sheet appear
+    - cron: '0 12 * * *'
 
 permissions:
   contents: read
@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: withastro/action@v3
-      with:
+        with:
           node-version: 22
 
   deploy:
