@@ -16,7 +16,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <Layout title={recipe.title}>
 
 	<main>
-	<a href={${base}/}>← Back</a>
+	<a href={`${base}/`}>← Back</a>
 	<div class="recipe">
 		<!-- Photo on the left -->
 		{recipe.image && <img src={recipe.image} alt={recipe.title} />}
